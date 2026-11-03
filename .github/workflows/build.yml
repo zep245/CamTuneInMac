@@ -1,0 +1,20 @@
+name: CamTune build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build camtune (x86_64)
+        run: |
+          set -e
+          bash build.sh "$RUNNER_TEMP/out"
+          file "$RUNNER_TEMP/out/camtune" | grep -q x86_64
+          echo "### camtune built" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: CamTune
+          path: ${{ runner.temp }}/out
